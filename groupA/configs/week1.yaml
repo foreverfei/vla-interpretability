@@ -1,0 +1,51 @@
+group: groupA
+experiment: representation_trace_week1
+
+model:
+  family: openvla
+  checkpoint: moojink/openvla-7b-oft-finetuned-libero-object
+  use_l1_regression: true
+  use_diffusion: false
+  use_film: false
+  num_images_in_input: 2
+  use_proprio: true
+  center_crop: true
+  num_open_loop_steps: 8
+  load_in_8bit: false
+  load_in_4bit: false
+
+environment:
+  suite: libero_object
+  task_id: 0
+  task_name: pick_up_the_alphabet_soup_and_place_it_in_the_basket
+  initial_state_indices: [0, 1, 2]
+  random_seed: 7
+  num_steps_wait: 10
+  max_steps: 280
+  env_img_res: 256
+
+trace:
+  enabled: true
+  selected_layers: auto_quartiles
+  save_policy_query_only: true
+  save_full_token_tensor: false
+  pooled_views:
+    - vision_pooled
+    - text_pooled
+    - joint_pooled
+  dtype: float16
+  format: npz
+
+output:
+  root: groupA/artifacts
+  save_video: true
+  save_observation: true
+  save_action_chunk: true
+  save_hidden_state: true
+  save_attention: false
+
+metadata:
+  require_git_commit: true
+  require_checkpoint: true
+  require_initial_state_index: true
+  require_policy_query_step: true
