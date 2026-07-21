@@ -1,0 +1,67 @@
+group: groupB
+experiment: behavior_intervention_week1
+
+model:
+  family: openvla
+  checkpoint: moojink/openvla-7b-oft-finetuned-libero-object
+  use_l1_regression: true
+  use_diffusion: false
+  use_film: false
+  num_images_in_input: 2
+  use_proprio: true
+  center_crop: true
+  num_open_loop_steps: 8
+  load_in_8bit: false
+  load_in_4bit: false
+
+environment:
+  suite: libero_object
+  task_id: 0
+  task_name: pick_up_the_alphabet_soup_and_place_it_in_the_basket
+  target_instance: alphabet_soup_1
+  receptacle_instance: basket_1
+  initial_state_indices: [0, 1, 2]
+  random_seed: 7
+  num_steps_wait: 10
+  max_steps: 280
+  env_img_res: 256
+
+intervention:
+  conditions:
+    - baseline
+    - target_mask
+    - background_control
+  apply_to_views:
+    - full_image
+  replacement_mode: background_fill
+  area_tolerance: 0.10
+  exclude_from_background:
+    - target_instance
+    - receptacle_instance
+    - robot
+    - gripper
+  mask_each_policy_query: true
+
+analysis:
+  action_metric: mean_l2
+  compare_with: baseline
+  paired_by:
+    - task_id
+    - initial_state_index
+  report_success: true
+  report_episode_length: true
+
+output:
+  root: groupB/artifacts
+  save_video: true
+  save_original_frame: true
+  save_mask_preview: true
+  save_action_chunk: true
+  save_segmentation: false
+
+metadata:
+  require_git_commit: true
+  require_checkpoint: true
+  require_initial_state_index: true
+  require_condition: true
+  require_mask_area: true
