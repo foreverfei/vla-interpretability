@@ -1,0 +1,13 @@
+third_party/
+artifacts/
+logs/
+outputs/
+*.npz
+*.npy
+*.pt
+*.pth
+*.safetensors
+*.mp4
+*.avi
+.env
+__pycache__/
