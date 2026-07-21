@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VLA Episode Metadata",
+  "type": "object",
+  "required": [
+    "episode_id",
+    "group",
+    "model",
+    "checkpoint",
+    "suite",
+    "task_id",
+    "task_name",
+    "initial_state_index",
+    "random_seed",
+    "condition",
+    "instruction",
+    "success",
+    "episode_length",
+    "git_commit"
+  ],
+  "properties": {
+    "episode_id": {"type": "string"},
+    "group": {"enum": ["groupA", "groupB"]},
+    "model": {"type": "string"},
+    "checkpoint": {"type": "string"},
+    "suite": {"const": "libero_object"},
+    "task_id": {"type": "integer"},
+    "task_name": {"type": "string"},
+    "initial_state_index": {"type": "integer"},
+    "random_seed": {"type": "integer"},
+    "condition": {
+      "enum": ["baseline", "target_mask", "background_control"]
+    },
+    "instruction": {"type": "string"},
+    "target_object": {"type": "string"},
+    "success": {"type": "boolean"},
+    "episode_length": {"type": "integer", "minimum": 0},
+    "git_commit": {"type": "string"},
+    "trace_complete": {"type": "boolean"},
+    "notes": {"type": "string"}
+  },
+  "additionalProperties": true
+}
