@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# Checkpoints and model weights
+checkpoints/
+*.ckpt
+*.pt
+*.pth
+*.safetensors
+
+# Generated artifacts
+artifacts/
+logs/
+wandb/
+outputs/
+*.mp4
+*.avi
+*.npz
+*.npy
+*.hdf5
+
+# System
+.DS_Store
+Thumbs.db
