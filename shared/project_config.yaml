@@ -1,0 +1,60 @@
+project:
+  name: vla-interpretability
+  week: 1
+
+model:
+  family: openvla
+  checkpoint: moojink/openvla-7b-oft-finetuned-libero-object
+  use_l1_regression: true
+  use_diffusion: false
+  use_film: false
+  num_images_in_input: 2
+  use_proprio: true
+  center_crop: true
+  num_open_loop_steps: 8
+  load_in_8bit: false
+  load_in_4bit: false
+
+environment:
+  benchmark: LIBERO
+  task_suite_name: libero_object
+  task_order_index: 0
+  task_id: 0
+  task_name: pick_up_the_alphabet_soup_and_place_it_in_the_basket
+  instruction: Pick the alphabet soup and place it in the basket
+  target_object: alphabet_soup_1
+  destination_object: basket_1
+  initial_state_indices: [0, 1, 2]
+  random_seed: 7
+  num_steps_wait: 10
+  max_steps: 280
+  env_img_res: 256
+
+conditions:
+  - baseline
+  - target_mask
+  - background_control
+
+trace:
+  enabled_layers: quarter_points
+  save_full_tokens: false
+  save_vision_pooled: true
+  save_text_pooled: true
+  save_joint_pooled: true
+  save_action_chunks: true
+  save_every_policy_query: true
+
+mask:
+  target_instance: alphabet_soup_1
+  background_area_tolerance: 0.10
+  replacement_mode: background_fill
+  exclude_robot: true
+  exclude_target: true
+  exclude_objects_of_interest: true
+
+output:
+  root: artifacts
+  save_video: true
+  save_observations: true
+  save_logs: true
+  save_large_tensors_to_git: false
