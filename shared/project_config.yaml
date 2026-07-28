@@ -1,6 +1,7 @@
 project:
   name: vla-interpretability
   week: 1
+  protocol_version: v1.0
 
 model:
   family: openvla
@@ -35,6 +36,14 @@ conditions:
   - target_mask
   - background_control
 
+pairing:
+  id_format: "{task_id}__{initial_state_index}__seed{random_seed}"
+  require_same_checkpoint: true
+  require_same_instruction: true
+  require_same_initial_state: true
+  require_same_seed: true
+  require_same_open_loop_steps: true
+
 trace:
   enabled_layers: quarter_points
   save_full_tokens: false
@@ -43,6 +52,8 @@ trace:
   save_joint_pooled: true
   save_action_chunks: true
   save_every_policy_query: true
+  token_pooling: mean
+  require_query_step_alignment: true
 
 mask:
   target_instance: alphabet_soup_1
@@ -51,6 +62,26 @@ mask:
   exclude_robot: true
   exclude_target: true
   exclude_objects_of_interest: true
+
+metrics:
+  representation:
+    - cosine_drift
+    - normalized_l2_drift
+  action:
+    - action_chunk_l2
+    - action_chunk_cosine
+    - first_divergence_query
+  behavior:
+    - success
+    - episode_length
+    - failure_stage
+
+validation:
+  require_metadata_schema: true
+  require_per_episode_results: true
+  require_failure_cases: true
+  require_git_commit: true
+  require_config_hash: true
 
 output:
   root: artifacts
