@@ -21,6 +21,7 @@ REQUIRED_FILES = (
     "groupB/README.md",
     "docs/PROJECT_CHARTER.md",
     "docs/EXPERIMENT_PROTOCOL.md",
+    "docs/PAPER_LIST.md",
     "docs/WEEK1_PLAN.md",
     "docs/WEEK2_PLAN.md",
     "docs/STUDENT_WORKFLOW.md",
