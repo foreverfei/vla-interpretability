@@ -26,6 +26,7 @@ REQUIRED_FILES = (
     "docs/WEEK2_PLAN.md",
     "docs/STUDENT_WORKFLOW.md",
     "docs/RESULT_REPORT_TEMPLATE.md",
+    "docs/STYLE_GUIDE.md",
 )
 
 EXPECTED_CONDITIONS = ["baseline", "target_mask", "background_control"]
@@ -114,7 +115,7 @@ def validate_metadata_schema(schema: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     try:
         Draft202012Validator.check_schema(schema)
-    except Exception as exc:  # jsonschema provides detailed exception types.
+    except Exception as exc:
         errors.append(f"invalid metadata schema: {exc}")
         return errors
 
