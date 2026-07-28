@@ -1,47 +1,29 @@
-# 第一周执行计划：可复现 Rollout、Trace 与 Paired Intervention
+# 第一周计划：基础环境、表征追踪与配对干预
 
 ## 1. 本周目标
 
-第一周只建立可靠实验基础，不训练新模型，不扩大任务集，不形成机制性结论。
+第一周完成实验基础设施，不训练新模型，不扩大任务范围，不形成机制性结论。
 
-```text
-Group A：baseline rollout → hidden-state trace → step alignment
-Group B：baseline/target/background → paired rollout → action divergence
-```
+| 小组 | 本周目标 |
+|---|---|
+| A 组 | 跑通 baseline rollout，保存并对齐代表层 hidden state |
+| B 组 | 完成 baseline、target mask、background control 配对 rollout |
 
-## 2. 固定设置
+固定设置见 `shared/project_config.yaml`。
 
-使用 `shared/project_config.yaml`：
-
-```text
-Model: OpenVLA-OFT
-Checkpoint: moojink/openvla-7b-oft-finetuned-libero-object
-Benchmark: LIBERO-Object
-Task: pick up alphabet soup and place it in basket
-Initial states: 0 / 1 / 2
-Conditions: baseline / target_mask / background_control
-Seed: 7
-Open-loop steps: 8
-```
-
-## 3. Group A：Representation Trace
-
-### 唯一问题
-
-> 能否在不改变模型输出的情况下，稳定保存并对齐四个代表层的 hidden state、policy query 和 action chunk？
+## 2. A 组任务
 
 ### 任务
 
-- 跑通 3 个 initial states 的 baseline rollout；
-- 确认模型、环境和 checkpoint；
-- 为四个代表层注册 hook；
-- 保存 vision/text/joint pooled feature；
-- 保存每次 policy query 的 action chunk；
-- 建立 `policy_query_index ↔ env_step range ↔ trace` 映射；
-- 输出第一张 layer-wise drift 图；
-- 保存失败样本和完整日志。
+- 跑通 initial states 0、1、2 的 baseline rollout；
+- 注册四个代表层 hook；
+- 保存 vision、text、joint pooled feature；
+- 保存每次策略查询生成的动作块；
+- 建立 `policy_query_index ↔ env_step range ↔ trace` 对齐表；
+- 验证 hook 不改变动作输出；
+- 输出 layer-wise drift 图和失败样本。
 
-### 最低交付
+### 交付物
 
 ```text
 groupA/reports/week1/
@@ -57,33 +39,28 @@ groupA/reports/week1/
 └── result_summary.md
 ```
 
-### Gate A
+### 验收标准
 
-- 3 个 initial states 均有 baseline episode；
-- trace 数量与 policy-query 数量一致；
+- 3 个 baseline episodes 均完成；
+- trace 数量与策略查询数量一致；
 - action chunk 与 trace 使用同一 query index；
-- hook 不改变 baseline action output；
 - hidden state 无 NaN/Inf；
-- 所有结果可追溯到 config、checkpoint 和 commit。
+- hook 前后动作输出一致；
+- 结果可追溯到配置、checkpoint 和 commit。
 
-## 4. Group B：Behavior Intervention
-
-### 唯一问题
-
-> 能否在相同 initial state 和 seed 下，生成 target mask 与等面积 background control，并完成可比较的 paired rollouts？
+## 3. B 组任务
 
 ### 任务
 
-- 跑通 3 个 initial states 的 baseline rollout；
-- 生成 target object mask；
+- 跑通 initial states 0、1、2 的 baseline rollout；
+- 生成目标物体 mask；
 - 生成等面积 background control mask；
-- 验证 mask 不覆盖机器人、目标和关键对象；
-- 对每个 initial state 执行 baseline/target/background 三个条件；
-- 保存 action chunks、轨迹、success 和 failure stage；
-- 输出第一张 action divergence 图；
-- 保存 mask 可视化和失败样本。
+- 检查 background mask 不覆盖机器人、目标和关键对象；
+- 对每个 initial state 执行 baseline、target、background 三种条件；
+- 保存动作块、轨迹、success 和 failure stage；
+- 输出 action divergence 图、mask 可视化和失败样本。
 
-### 最低交付
+### 交付物
 
 ```text
 groupB/reports/week1/
@@ -100,28 +77,26 @@ groupB/reports/week1/
 └── result_summary.md
 ```
 
-### Gate B
+### 验收标准
 
-- 3 个 initial states × 3 个 conditions 均完成；
-- paired episodes 的 task、state、seed、checkpoint 完全一致；
+- 3 个 initial states × 3 个 conditions 共 9 个 episodes 完成；
+- 配对实验的 task、state、seed 和 checkpoint 完全一致；
 - target/background mask 面积差不超过 10%；
 - mask 元数据和可视化完整；
 - action chunk、success 和 episode length 无缺失；
-- 所有结果可追溯到 config、checkpoint 和 commit。
+- 结果可追溯到配置、checkpoint 和 commit。
 
-## 5. 每日节点
+## 4. 每日安排
 
-| 日期 | Group A | Group B |
+| 日期 | A 组 | B 组 |
 |---|---|---|
-| Day 1 | 环境与 baseline rollout | 环境与 baseline rollout |
+| Day 1 | 环境和 baseline rollout | 环境和 baseline rollout |
 | Day 2 | hook 与 feature shape 检查 | target/background mask 生成 |
-| Day 3 | 1 个 episode 完整 trace 对齐 | 1 个 initial state 完整 paired rollout |
-| Day 4 | 3 个 states 正式 trace | 9 个正式 paired episodes |
-| Day 5 | drift 图、失败样本、Gate 报告 | divergence 图、失败样本、Gate 报告 |
+| Day 3 | 完成 1 个 episode 的 trace 对齐 | 完成 1 个 initial state 的配对 rollout |
+| Day 4 | 扩展到 3 个 initial states | 完成 9 个正式 episodes |
+| Day 5 | 图表、失败样本和结果报告 | 图表、失败样本和结果报告 |
 
-## 6. 跨组接口
-
-两组只通过以下公共字段联调：
+## 5. 跨组公共字段
 
 ```text
 paired_group_id
@@ -136,23 +111,16 @@ env_step_end
 action_chunk
 ```
 
-第一周不要求联合统计，只要求字段可以连接。
+第一周只检查字段能否连接，不进行跨组结论分析。
 
-## 7. 本周不做
+## 6. 本阶段范围
 
-- 不训练 OpenVLA；
-- 不新增复杂解释器；
-- 不运行 probing classifier；
-- 不做跨任务泛化；
-- 不把 layer drift 解释为因果机制；
-- 不因为某个成功案例而扩展论文 claim。
+第一周不做：
 
-## 8. 第一周决策
+- OpenVLA 训练或微调；
+- probing classifier；
+- 跨任务泛化；
+- activation patching；
+- 将 layer drift 直接解释为因果机制。
 
-```text
-P0：环境与 metadata
-P1-A：trace 对齐
-P1-B：paired intervention 对齐
-```
-
-两组均通过后才进入第二周联合分析。
+两组验收通过后进入第二周联合分析；未通过时先修复环境、数据和对齐问题。
