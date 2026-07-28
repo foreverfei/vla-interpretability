@@ -1,43 +1,29 @@
-# 第二周执行计划：Representation–Behavior Evidence Alignment
+# 第二周计划：表征与行为联合分析
 
-## 1. 本周定位
+## 1. 本周目标
 
-第二周不改变研究目标，也不扩大模型和任务范围。核心是将第一周两组独立产物连接起来，回答：
+第二周连接第一周两组结果，分析目标视觉干预引起的表征变化是否与动作和任务行为变化在同一配对实验中共同出现。
 
-> 目标视觉干预引起的内部表征变化，是否与动作和任务行为变化在同一 paired episode 中稳定共现？
+启动条件：
 
-```text
-Week 1：分别建立 trace 与 intervention pipeline
-Week 2：统一对齐 → 分层度量 → control comparison → 证据 Gate
-```
+- A 组 trace 与策略查询对齐完成；
+- B 组配对干预数据完整；
+- 两组 metadata 可以通过公共主键连接；
+- 缺失 episode 和缺失 query 已明确记录。
 
-## 2. 前置条件
-
-只有满足以下条件才启动第二周：
-
-- Group A trace 与 policy-query 对齐通过；
-- Group B paired intervention 对齐通过；
-- 两组 episode metadata 可通过公共主键连接；
-- baseline/target/background 均保留逐 episode 结果；
-- 无法对齐的 episode 已明确列出。
-
-## 3. Group A：Conditioned Representation Analysis
-
-### 唯一问题
-
-> 相同 policy-query 下，target intervention 引起的表示变化是否高于 background control，并呈现稳定的层级和时间结构？
+## 2. A 组任务
 
 ### 任务
 
-- 读取 baseline/target/background 的对齐 trace；
-- 分别计算 vision/text/joint feature drift；
-- 比较 target-mask drift 与 background-control drift；
+- 读取 baseline、target、background 三种条件的对齐 trace；
+- 计算 vision、text、joint feature drift；
+- 比较 target 与 background condition；
 - 生成 layer × time drift matrix；
-- 标记 first action-divergence 前后的表示变化；
-- 验证结果是否由 episode length 或 trace norm 驱动；
-- 输出逐 episode 结果，不只报告均值。
+- 标记首次动作分歧前后的表示变化；
+- 检查结果是否受 episode length、feature norm 或缺失 trace 影响；
+- 保留逐 query 和逐 episode 结果。
 
-### 最低交付
+### 交付物
 
 ```text
 groupA/reports/week2/
@@ -51,34 +37,27 @@ groupA/reports/week2/
 └── result_summary.md
 ```
 
-### Gate A2
+### 验收标准
 
-- target/background 均能与 baseline 对齐；
-- 至少 90% policy queries 有合法 trace；
-- layer/time 指标定义固定；
-- 结论在逐 episode 层面可复核；
+- 三种条件均可与 baseline 对齐；
+- 至少 90% 的策略查询有合法 trace；
+- layer 和 time 指标定义固定；
+- 逐 episode 结果可复核；
 - 降维图不作为唯一证据。
 
-## 4. Group B：Paired Behavioral Effect Analysis
-
-### 唯一问题
-
-> Target Mask 是否比等面积 Background Control 更稳定地改变动作块、轨迹和任务结果？
+## 3. B 组任务
 
 ### 任务
 
-- 计算 baseline-target 与 baseline-background 的 action-chunk 距离；
-- 定位 first divergence policy-query；
-- 比较 trajectory divergence、success 和 failure stage；
-- 分析 mask 面积误差与行为效应的关系；
-- 对明显异常 episode 进行视频复核；
-- 输出 target-specific excess effect：
+- 计算 baseline-target 和 baseline-background 的动作块距离；
+- 按平移、旋转和 gripper 分别报告动作差异；
+- 定位首次动作分歧的策略查询；
+- 分析首次分歧前、分歧时和分歧后的轨迹变化；
+- 比较 trajectory、success、episode length 和 failure stage；
+- 分析 mask 面积和位置对结果的影响；
+- 复核异常 episode 和失败视频。
 
-```text
-effect_target - effect_background
-```
-
-### 最低交付
+### 交付物
 
 ```text
 groupB/reports/week2/
@@ -87,22 +66,22 @@ groupB/reports/week2/
 ├── failure_stage_review.csv
 ├── metrics.json
 ├── figures/action_distance_over_time.png
-├── figures/target_excess_effect.png
+├── figures/target_vs_background.png
 ├── failure_cases/
 └── result_summary.md
 ```
 
-### Gate B2
+### 验收标准
 
-- target/background control 均有完整 paired baseline；
-- first divergence 能映射到 policy-query；
-- target effect 与 background effect 分开报告；
-- success episode 和 failure episode 均保留；
-- 不以单个成功案例作为结论。
+- target 和 background 均有完整 baseline 配对；
+- 首次动作分歧能够映射到策略查询；
+- target 和 background 结果分开报告；
+- 成功和失败 episode 均保留；
+- 不以单个案例作为结论。
 
-## 5. Integration：跨组联合分析
+## 4. 跨组联合分析
 
-### 主键
+连接主键：
 
 ```text
 paired_group_id
@@ -111,35 +90,32 @@ condition
 policy_query_index
 ```
 
-### 联合表
-
-每行表示一个 paired policy query：
+联合表每行表示一个配对策略查询，至少包含：
 
 ```text
 representation_drift_vision
 representation_drift_text
 representation_drift_joint
 action_chunk_distance
-trajectory_divergence
-before_or_after_first_divergence
+first_divergence_phase
 condition
 success
 failure_stage
 ```
 
-### 分析顺序
+分析顺序：
 
-1. 验证两组数据覆盖率；
-2. 分别报告 Group A 和 Group B 主结果；
-3. 分析 representation drift 与 action divergence 的相关性；
-4. 比较 target 与 background control；
+1. 报告数据覆盖率和缺失情况；
+2. 分别完成 A 组和 B 组主结果；
+3. 比较 target 与 background condition；
+4. 分析表征变化与动作差异的关系；
 5. 按 initial state 和 episode 分层；
-6. 报告不一致样本：高表示变化但低行为变化，或反之；
-7. 只在证据一致时提出解释性结论。
+6. 报告不一致样本；
+7. 在实验范围内给出结论。
 
-## 6. 推荐指标
+## 5. 推荐指标
 
-### Representation
+### 表征
 
 ```text
 cosine drift
@@ -148,51 +124,61 @@ layer-wise relative drift
 time-to-peak drift
 ```
 
-### Action / Behavior
+### 动作与行为
 
 ```text
-action-chunk L2
+action-chunk L2/cosine distance
 per-dimension action distance
 first divergence query
 trajectory endpoint distance
-success delta
-episode length delta
+success change
+episode length change
 ```
 
-### Cross-group
+### 联合分析
 
 ```text
+paired target-background difference
 Spearman correlation
-paired target-vs-background difference
 bootstrap confidence interval
 per-episode consistency rate
 ```
 
-## 7. 关键控制实验
+## 6. 控制实验
 
 - 相同面积、不同位置的 background mask；
-- target mask 面积归一化；
-- trace norm 与 drift 解耦；
-- baseline 重复 rollout 检查随机波动；
+- baseline 重复 rollout，用于估计随机波动；
+- mask 面积归一化；
+- feature norm 与 drift 的解耦；
 - episode length 匹配或事件对齐；
-- 不同 layer pooling 方式敏感性。
+- 不同 pooling 方式的敏感性检查。
 
-## 8. 本周不做
+## 7. 本阶段范围
 
-- 不训练新的解释模型；
-- 不加入额外 VLA backbone；
-- 不扩大到全部 LIBERO suite；
-- 不将相关性直接称为因果机制；
-- 不只展示 t-SNE/UMAP；
-- 不隐藏 target intervention 无效的 episode。
+第二周不做：
 
-## 9. 第二周 P2/P3 Gate
+- 训练新的解释模型；
+- 增加新的 VLA backbone；
+- 扩大到全部 LIBERO suite；
+- 将相关性直接称为因果机制；
+- 只展示 t-SNE/UMAP；
+- 隐藏无效或未复现 episode。
 
-进入后续研究前必须满足：
+## 8. 阶段验收
 
-1. target 与 background control 的 paired protocol 有效；
-2. representation 和 action 能在 query 级对齐；
-3. 至少一个指标显示 target-specific effect，而非普通遮挡效应；
-4. 主要现象在多个 initial states 中重复出现；
-5. 不一致和失败样本得到解释或明确保留；
-6. 当前结果足以决定后续是扩大验证、调整指标或停止该假设。
+第二周完成后，由教师给出以下结论之一：
+
+```text
+通过：数据和现象支持进入下一阶段
+补充后复验：协议或样本仍需完善
+不通过：当前假设未得到支持
+暂停：当前方向暂不继续投入
+```
+
+进入下一阶段前，应至少满足：
+
+1. target/background 配对协议有效；
+2. 表征和动作可以按策略查询连接；
+3. 至少一个指标显示 target-specific effect；
+4. 主要现象在多个 initial states 中重复；
+5. 失败和不一致样本已保留并说明。

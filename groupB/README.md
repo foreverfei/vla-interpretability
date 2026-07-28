@@ -1,33 +1,39 @@
-# Group B — Behavior Intervention
+# B 组：视觉干预与行为分析
 
-## 1. 研究问题
+## 1. 负责内容
 
-> 在保持任务、initial state、seed、instruction 与 checkpoint 不变时，目标区域干预是否比等面积背景控制更稳定地改变动作与任务行为？
+B 组负责目标区域和背景区域的受控干预、配对 rollout 和行为结果分析。
 
-Group B 负责干预协议与行为测量，不负责定义 hidden-state hook。
+主要问题：
 
-## 2. 第一周目标
+> 在模型、任务、初始状态、随机种子和 instruction 不变时，目标区域干预是否比背景对照更稳定地改变动作和任务行为？
+
+B 组不负责 hidden-state hook 的实现。
+
+## 2. 当前任务
+
+### 第一周
 
 - 跑通 OpenVLA-OFT + LIBERO-Object；
-- 生成 Target Mask 与 Background Control Mask；
-- 完成 3 个 initial states × 3 个 conditions 的 paired rollout；
-- 保存 action chunks、trajectory、success 和 failure stage；
-- 输出第一张 action divergence 图；
-- 保存 mask 可视化和失败样本。
+- 生成 target mask 和 background control mask；
+- 完成 3 个 initial states × 3 个 conditions 的配对 rollout；
+- 保存动作块、轨迹、success 和 failure stage；
+- 输出 action divergence 图、mask 可视化和失败样本。
 
-详细任务见 [`docs/WEEK1_PLAN.md`](../docs/WEEK1_PLAN.md)。
+### 第二周
 
-## 3. 第二周目标
+- 计算 baseline-target 和 baseline-background 动作差异；
+- 按平移、旋转和 gripper 分别报告动作变化；
+- 定位首次动作分歧的策略查询；
+- 对齐 A 组的 representation trace；
+- 输出逐 episode 行为分析。
 
-- 计算 baseline-target 与 baseline-background 动作差异；
-- 定位 first divergence policy-query；
-- 比较 target-specific excess effect；
-- 对齐 representation trace；
-- 输出逐 episode 行为效应和失败阶段分析。
+详细任务见：
 
-详细任务见 [`docs/WEEK2_PLAN.md`](../docs/WEEK2_PLAN.md)。
+- [`docs/WEEK1_PLAN.md`](../docs/WEEK1_PLAN.md)
+- [`docs/WEEK2_PLAN.md`](../docs/WEEK2_PLAN.md)
 
-## 4. 目录结构
+## 3. 目录建议
 
 ```text
 groupB/
@@ -37,10 +43,6 @@ groupB/
 │   ├── rollout/
 │   └── metrics/
 ├── scripts/
-│   ├── generate_masks.py
-│   ├── run_paired_rollouts.py
-│   ├── validate_pairing.py
-│   └── analyze_action_divergence.py
 ├── configs/
 ├── tests/
 └── reports/
@@ -48,17 +50,17 @@ groupB/
     └── week2/
 ```
 
-代码职责：
+职责划分：
 
-- `masks/`：target/background mask 生成与验证；
+- `masks/`：target/background mask 生成和检查；
 - `interventions/`：替换、遮挡和输入变换；
-- `rollout/`：paired episode 编排和保存；
-- `metrics/`：action、trajectory、success 与 failure-stage 分析；
-- `scripts/`：只做参数解析和流程编排。
+- `rollout/`：配对 episode 执行和保存；
+- `metrics/`：动作、轨迹、success 和 failure-stage 分析；
+- `scripts/`：参数解析和流程编排。
 
-## 5. 输出契约
+## 4. 输出格式
 
-每个 paired group 至少输出：
+每个配对实验组至少输出：
 
 ```text
 baseline episode
@@ -96,25 +98,24 @@ episode_length
 policy_query_count
 ```
 
-## 6. 代码约束
+## 5. 基本要求
 
-- baseline/target/background 必须共享任务、state、seed 和 checkpoint；
-- target/background mask 面积差不得超过协议阈值；
-- background control 不得覆盖机器人、目标和关键对象；
-- 干预只改变视觉输入，不修改 instruction 或 proprioception；
+- baseline、target、background 使用相同任务、state、seed 和 checkpoint；
+- target/background mask 面积差不超过协议阈值；
+- background control 不覆盖机器人、目标和关键对象；
+- 干预只修改视觉输入，不修改 instruction 或 proprioception；
 - 不提交视频和大规模观测；
-- 所有 artifact 必须通过 metadata 指向；
+- 所有实验产物通过 metadata 指向；
 - 失败 episode 不得删除。
 
-## 7. 验收 Gate
+## 6. 验收标准
 
-```text
-P0：baseline rollout 可复现
-P1：3 states × 3 conditions 完整
-P2：mask control 约束通过
-P3：paired action chunks 可按 query 对齐
-```
+- baseline rollout 可复现；
+- 3 个 states × 3 个 conditions 数据完整；
+- mask control 满足面积和位置约束；
+- 配对动作块可以按策略查询对齐；
+- 配置、命令、代码版本和失败样本完整。
 
-## 8. 负责人
+## 7. 分工
 
-研究生 B 负责实验协议、mask 规则、组内审核与 PR review；本科生负责 mask、paired rollout、action divergence 和失败样本分析。
+研究生 B 负责实验设置、mask 规则和 PR 审核；本科生负责 mask、配对 rollout、动作差异和失败样本整理。
