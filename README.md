@@ -41,6 +41,7 @@ paired environment states
 |---|---|
 | [项目章程](docs/PROJECT_CHARTER.md) | 固定研究目标、问题边界与阶段 Gate |
 | [统一实验协议](docs/EXPERIMENT_PROTOCOL.md) | 模型、环境、paired rollout、trace 和 mask 约束 |
+| [论文列表](docs/PAPER_LIST.md) | 已发表会议论文、近半年 arXiv、代码与阅读顺序 |
 | [第一周计划](docs/WEEK1_PLAN.md) | 环境跑通、trace 与 paired intervention 基线 |
 | [第二周计划](docs/WEEK2_PLAN.md) | 表征—行为对齐、分层分析与控制实验 |
 | [学生协作手册](docs/STUDENT_WORKFLOW.md) | Issue、分支、每日记录、PR 与验收规则 |
@@ -61,6 +62,7 @@ vla-interpretability/
 ├── docs/
 │   ├── PROJECT_CHARTER.md
 │   ├── EXPERIMENT_PROTOCOL.md
+│   ├── PAPER_LIST.md
 │   ├── WEEK1_PLAN.md
 │   ├── WEEK2_PLAN.md
 │   ├── STUDENT_WORKFLOW.md
