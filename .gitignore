@@ -4,6 +4,15 @@ __pycache__/
 .venv/
 venv/
 .env
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+
+# Local configuration
+configs/local*.yaml
+shared/local*.yaml
 
 # IDE
 .vscode/
@@ -11,6 +20,7 @@ venv/
 
 # Checkpoints and model weights
 checkpoints/
+external/
 *.ckpt
 *.pt
 *.pth
@@ -21,6 +31,7 @@ artifacts/
 logs/
 wandb/
 outputs/
+data/
 *.mp4
 *.avi
 *.npz
