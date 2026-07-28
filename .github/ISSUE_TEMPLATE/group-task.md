@@ -1,19 +1,19 @@
 ---
-name: Group research task
-about: Define one reproducible research or engineering task
+name: 实验或工程任务
+about: 定义一项可执行、可验收的任务
 title: "[Group A/B][Week N] "
 labels: ""
 assignees: ""
 ---
 
-## 唯一问题
+## 任务目标
 
-> 本 Issue 只回答什么问题？
+> 本任务需要解决什么问题？
 
-## 研究线
+## 负责人和分组
 
 ```text
-Group A / Group B / Integration / Teacher Protocol
+A 组 / B 组 / 跨组集成 / 共享配置
 ```
 
 ## 输入与依赖
@@ -23,13 +23,13 @@ Group A / Group B / Integration / Teacher Protocol
 - 数据/任务：
 - 前置 Issue/PR：
 
-## 具体任务
+## 任务清单
 
 - [ ]
 - [ ]
 - [ ]
 
-## 最低交付物
+## 交付物
 
 ```text
 config.yaml
@@ -43,14 +43,16 @@ failure_cases/
 result_summary.md
 ```
 
-## 验收 Gate
+按任务实际情况删除不需要的文件，并补充专用输出。
 
-- [ ] 输出可追溯到 config/checkpoint/commit
+## 验收标准
+
+- [ ] 结果可追溯到配置、checkpoint 和 commit
 - [ ] 保留逐 episode 结果
-- [ ] 失败样本完整
+- [ ] 失败和异常样本完整
 - [ ] `python tools/validate_repository.py` 通过
 - [ ] `pytest -q` 通过
-- [ ] 当前问题得到明确 PASS / FAIL / REPEAT / STOP
+- [ ] 给出“通过 / 补充后复验 / 不通过 / 暂停”建议
 
 ## 分支
 
@@ -64,10 +66,10 @@ group-a/weekN-task 或 group-b/weekN-task
 groupA/ 或 groupB/
 ```
 
-## 明确不做
+## 本阶段范围
 
-- 
+- 本任务暂不处理：
 
-## 每日记录
+## 进度记录
 
-后续更新直接追加到本 Issue，格式见 `docs/STUDENT_WORKFLOW.md`。
+后续进度直接更新到本 Issue，格式见 `docs/STUDENT_WORKFLOW.md`。
